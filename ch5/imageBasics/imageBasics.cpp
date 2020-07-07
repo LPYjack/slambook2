@@ -5,6 +5,7 @@ using namespace std;
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 int main(int argc, char **argv) {
   // 读取argv[1]指定的图像
@@ -48,20 +49,35 @@ int main(int argc, char **argv) {
   chrono::duration<double> time_used = chrono::duration_cast < chrono::duration < double >> (t2 - t1);
   cout << "遍历图像用时：" << time_used.count() << " 秒。" << endl;
 
-  // 关于 cv::Mat 的拷贝
-  // 直接赋值并不会拷贝数据
-  cv::Mat image_another = image;
-  // 修改 image_another 会导致 image 发生变化
-  image_another(cv::Rect(0, 0, 100, 100)).setTo(0); // 将左上角100*100的块置零
-  cv::imshow("image", image);
+  // // 关于 cv::Mat 的拷贝
+  // // 直接赋值并不会拷贝数据
+  // cv::Mat image_another = image;
+  // // 修改 image_another 会导致 image 发生变化
+  // image_another(cv::Rect(0, 0, 100, 100)).setTo(0); // 将左上角100*100的块置零
+  // cv::imshow("image", image);
+  // cv::waitKey(0);
+
+  // // 使用clone函数来拷贝数据
+  // cv::Mat image_clone = image.clone();
+  // image_clone(cv::Rect(0, 0, 100, 100)).setTo(255);
+  // cv::imshow("image", image);
+  // cv::imshow("image_clone", image_clone);
+  // cv::waitKey(0);
+  std::cout << "step:" << image.step << std::endl;
+  std::cout << "step[0]:" << image.step[0] << std::endl;
+  std::cout << "step[1]:" << image.step[1] << std::endl;
+  std::cout << "step[2]:" << image.step[2] << std::endl;
+
+  cv::Mat image_gray;
+  cv::cvtColor(image, image_gray, CV_BGR2GRAY);
+  cv::imshow("image_gray", image_gray);
+  // cv::waitKey(0);
+
+  cv::Mat image_gray_bgr;
+  cv::cvtColor(image_gray, image_gray_bgr, CV_GRAY2BGR);
+  cv::imshow("image_gray2BGR", image_gray_bgr);
   cv::waitKey(0);
 
-  // 使用clone函数来拷贝数据
-  cv::Mat image_clone = image.clone();
-  image_clone(cv::Rect(0, 0, 100, 100)).setTo(255);
-  cv::imshow("image", image);
-  cv::imshow("image_clone", image_clone);
-  cv::waitKey(0);
 
   // 对于图像还有很多基本的操作,如剪切,旋转,缩放等,限于篇幅就不一一介绍了,请参看OpenCV官方文档查询每个函数的调用方法.
   cv::destroyAllWindows();
